@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Innum</string>
+    <string name="string_tV1_second">Lista de la compra</string>
+    <string name="string_text_second">Añadir ítem</string>
+    <string name="string_text2_second">Añadir cantidad</string>
+    <string name="tV2_second">Mantener pulsado para borrar ítem</string>
+    <string name="delbutton_second">Eliminar todo</string>
+    <string name="button_second">Añadir</string>
+    <string name="string_rellenar">Rellene el campo ítem.</string>
+    <string name="string_error">Error al insertar: elemento repetido.</string>
+    <string name="string_error_vacio">Error al eliminar: lista vacia.</string>
+    <string name="string_duda">¿Confirma eliminar toda la lista?</string>
+    <string name="string_si">Afirmativo</string>
+    <string name="string_no">Negativo</string>
+</resources>

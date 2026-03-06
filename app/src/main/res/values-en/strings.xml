@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Innum</string>
+    <string name="string_tV1_second">Shopping list</string>
+    <string name="string_text_second">Add item</string>
+    <string name="string_text2_second">Add quantity</string>
+    <string name="tV2_second">Long press to delete item</string>
+    <string name="delbutton_second">Delete all</string>
+    <string name="button_second">Add</string>
+    <string name="string_rellenar">Please fill in the item field.</string>
+    <string name="string_error">Error inserting: duplicate item.</string>
+	<string name="string_error_vacio">Error deleting: empty list.</string>
+    <string name="string_duda">Do you want to delete the entire list?</string>
+    <string name="string_si">Afirmative</string>
+    <string name="string_no">Negative</string>
+</resources>
