@@ -30,7 +30,7 @@ public class SecondActivity extends AppCompatActivity {
 
     protected String textAux1="";
     protected String textAux2="";
-    protected int intAux;
+    protected int intAux, idAux;
     protected ArrayList<Product>  buyingList = new ArrayList<>();
     protected ArrayAdapter<Product> adaptador;
 
@@ -93,8 +93,9 @@ public class SecondActivity extends AppCompatActivity {
                     }
                     text_second.setText("");
                     text2_second.setText("");
-                    if (dbm.setProducts(textAux1, intAux)){
-                        buyingList.add(new Product(textAux1,intAux));
+                    idAux = dbm.setProducts(textAux1, intAux);
+                    if (idAux!=-1){
+                        buyingList.add(new Product(idAux, textAux1, intAux));
                     } else {
                         Toast.makeText(SecondActivity.this, getString(R.string.string_error), Toast.LENGTH_SHORT).show();
                     }

@@ -26,16 +26,25 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
     }
 
-    public boolean setProducts(String prdct, int cntt){
+    public int setProducts(String prdct, int cntt){
 
-        SQLiteDatabase db = this.getReadableDatabase();
-
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = null;
+        try {
         if (!existProducts(prdct)) {
 
             db.execSQL("INSERT INTO products (object, cuantity) VALUES (?, ?)", new Object[]{prdct,cntt});
-            return true;
+            cur = db.rawQuery("SELECT id FROM products WHERE object='" + prdct + "'", null);
+            if(cur.moveToFirst()){
+                return cur.getInt(0);
+            }
         }
-        return false;
+        return -1;
+        } finally {
+            if(cur!=null) {
+                cur.close();
+            }
+        }
     }
 
     public ArrayList<Product> getProducts () {
@@ -75,8 +84,8 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
     public boolean deleteProducts (int id) {
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        db.execSQL("DELETE FROM Products WHERE id="+id);
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM products WHERE id="+id);
         if (existIdProducts(id)) {
             return false;
         }
@@ -85,20 +94,20 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
     public boolean deleteAllProducts () {
 
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
         try {
-            db.execSQL("DELETE FROM Products");
-            db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE name='Products'");
+            db.execSQL("DELETE FROM products");
+            db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE name='products'");
             return true;
         } finally {
 
         }
     }
 
-    public boolean existIdProducts (int name) {
+    public boolean existIdProducts (int id) {
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cur = db.rawQuery("SELECT * FROM products WHERE object = '"+ name +"'", null);
+        Cursor cur = db.rawQuery("SELECT * FROM products WHERE id = '"+ id +"'", null);
         try {
             if (cur != null) {
                 cur.moveToLast();

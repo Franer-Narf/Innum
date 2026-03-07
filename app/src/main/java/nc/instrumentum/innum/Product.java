@@ -10,12 +10,6 @@ public class Product {
     Product(){
     }
 
-    Product(String a, int b) {
-        this.id = 0;
-        this.obj = a;
-        this.num = b;
-    }
-
     Product(int z, String a, int b) {
         this.id = z;
         this.obj = a;
