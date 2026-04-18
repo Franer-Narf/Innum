@@ -3,8 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/info_main"
+        android:id="@+id/info_menu"
         android:icon="@android:drawable/ic_menu_info_details"
-        android:title="Item"
+        android:title="info_menu"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/listoflist_menu"
+        android:icon="@android:drawable/ic_menu_more"
+        android:title="list"
         app:showAsAction="always" />
 </menu>

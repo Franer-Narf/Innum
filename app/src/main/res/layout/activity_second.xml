@@ -15,6 +15,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
+		android:fontFamily="@font/ncbgm"
         app:layout_constraintBottom_toTopOf="@+id/tV2_second"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -40,7 +41,7 @@
     <Button
         android:id="@+id/button_second"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:layout_marginStart="128dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="128dp"
@@ -89,7 +90,7 @@
     <Button
         android:id="@+id/delbutton_second"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/btn_octagon_add"

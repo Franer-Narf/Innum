@@ -3,6 +3,8 @@ package nc.instrumentum.innum;
 public class Product {
 
     private int id;
+    private int idList;
+
     private String obj;
 
     private int num;
@@ -10,10 +12,11 @@ public class Product {
     Product(){
     }
 
-    Product(int z, String a, int b) {
+    Product(int z, String a, int b, int y) {
         this.id = z;
         this.obj = a;
         this.num = b;
+        this.idList = y;
     }
 
     public String getObj() {
@@ -38,6 +41,14 @@ public class Product {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getIdList() {
+        return this.idList;
+    }
+
+    public void setIdList(int idList) {
+        this.idList = idList;
     }
 
     @Override

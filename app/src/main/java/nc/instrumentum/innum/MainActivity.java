@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         TimerTask myTimerTask = new TimerTask() {
             @Override public void run() {
 
-            nextScreen= new Intent(MainActivity.this, SecondActivity.class);
+            nextScreen= new Intent(MainActivity.this, ThirdActivity.class);
             finish();
             startActivity(nextScreen);
             }
