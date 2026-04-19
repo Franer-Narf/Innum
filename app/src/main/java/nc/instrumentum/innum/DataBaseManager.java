@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class DataBaseManager extends SQLiteOpenHelper {
     public DataBaseManager(@Nullable Context context) {
-        super(context, "productslist", null, 1);
+        super(context, "productslist", null, 2);
     }
 
     @Override
