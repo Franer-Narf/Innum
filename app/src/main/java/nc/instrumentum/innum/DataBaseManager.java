@@ -32,8 +32,17 @@ public class DataBaseManager extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+        if (i < 2) {
+            resetDatabase(db);
+        }
+    }
 
+    private void resetDatabase(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS products");
+        db.execSQL("DROP TABLE IF EXISTS productlist");
+
+        onCreate(db);
     }
 
     public int createList(String title) {

@@ -23,6 +23,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.activity.OnBackPressedCallback;
+
+
 
 import java.util.ArrayList;
 
@@ -241,6 +244,16 @@ public class SecondActivity extends AppCompatActivity {
 
             }
         });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Intent backScreen = new Intent(SecondActivity.this, ThirdActivity.class);
+                finish();
+                startActivity(backScreen);
+            }
+        });
+
     }
 
     @Override
