@@ -25,6 +25,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.activity.OnBackPressedCallback;
 
+import android.net.Uri;
+
+import androidx.core.content.FileProvider;
+
+import java.io.File;
+
 
 
 import java.util.ArrayList;
@@ -35,7 +41,7 @@ public class SecondActivity extends AppCompatActivity {
     protected EditText text_second, text2_second;
     protected Button button_second, delbutton_second;
     protected TextView tV1_second;
-    protected MenuItem info_button, list_button;
+    protected MenuItem info_button, list_button, add_button, share_button;
 
     private boolean swipeHandler = false;
     protected float dX, dY;
@@ -266,6 +272,28 @@ public class SecondActivity extends AppCompatActivity {
         super.onRestart();
     }
 
+    private void shareJson() {
+        File exportFile = dbm.exportJson(SecondActivity.this);
+
+        if (exportFile != null) {
+            Uri uri = FileProvider.getUriForFile(
+                    SecondActivity.this,
+                    getPackageName() + ".fileprovider",
+                    exportFile
+            );
+
+            nextScreen = new Intent(Intent.ACTION_SEND);
+            nextScreen.setType("*/*");
+            nextScreen.putExtra(Intent.EXTRA_STREAM, uri);
+            nextScreen.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            startActivity(Intent.createChooser(nextScreen, "Share Innum data"));
+
+        } else {
+            Toast.makeText(SecondActivity.this,"Error exporting data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -273,6 +301,8 @@ public class SecondActivity extends AppCompatActivity {
 
         info_button = (MenuItem) findViewById(R.id.info_menu);
         list_button = (MenuItem) findViewById(R.id.listoflist_menu);
+        share_button = (MenuItem) findViewById(R.id.share_menu);
+        add_button = (MenuItem) findViewById(R.id.add_menu);
 
         return true;
     }
@@ -288,6 +318,9 @@ public class SecondActivity extends AppCompatActivity {
         } else if (auxItem == R.id.info_menu) {
             nextScreen = new Intent(SecondActivity.this, FirstActivity.class);
             startActivity(nextScreen);
+            return true;
+        } else if (auxItem == R.id.share_menu) {
+            shareJson();
             return true;
         } else {
             return super.onOptionsItemSelected(item);

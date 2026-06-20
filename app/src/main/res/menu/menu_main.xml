@@ -3,13 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/info_menu"
-        android:icon="@android:drawable/ic_menu_info_details"
-        android:title="info_menu"
+        android:id="@+id/add_menu"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="add_menu"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/share_menu"
+        android:icon="@android:drawable/ic_menu_share"
+        android:title="share_menu"
         app:showAsAction="always" />
     <item
         android:id="@+id/listoflist_menu"
         android:icon="@android:drawable/ic_menu_more"
         android:title="list"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/info_menu"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="info_menu"
         app:showAsAction="always" />
 </menu>

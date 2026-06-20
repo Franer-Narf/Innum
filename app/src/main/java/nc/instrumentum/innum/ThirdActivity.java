@@ -28,6 +28,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import android.net.Uri;
+
+import androidx.core.content.FileProvider;
+
+import java.io.File;
+
 public class ThirdActivity extends AppCompatActivity {
 
     //Declarations
@@ -42,7 +48,7 @@ public class ThirdActivity extends AppCompatActivity {
     protected Button bAdd, bDel;
     protected EditText fText;
     protected ListView listV;
-    protected MenuItem info_button, list_button;
+    protected MenuItem info_button, list_button, add_button, share_button;
 
     protected DataBaseManager dbm;
     protected ArrayAdapter<ListClass> adapterList;
@@ -236,6 +242,28 @@ public class ThirdActivity extends AppCompatActivity {
         });
     }
 
+    private void shareJson() {
+        File exportFile = dbm.exportJson(ThirdActivity.this);
+
+        if (exportFile != null) {
+            Uri uri = FileProvider.getUriForFile(
+                    ThirdActivity.this,
+                    getPackageName() + ".fileprovider",
+                    exportFile
+            );
+
+            nextScreen = new Intent(Intent.ACTION_SEND);
+            nextScreen.setType("*/*");
+            nextScreen.putExtra(Intent.EXTRA_STREAM, uri);
+            nextScreen.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            startActivity(Intent.createChooser(nextScreen, "Share Innum data"));
+
+        } else {
+            Toast.makeText(ThirdActivity.this,"Error exporting data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -243,6 +271,8 @@ public class ThirdActivity extends AppCompatActivity {
 
         info_button = (MenuItem) findViewById(R.id.info_menu);
         list_button = (MenuItem) findViewById(R.id.listoflist_menu);
+        share_button = (MenuItem) findViewById(R.id.share_menu);
+        add_button = (MenuItem) findViewById(R.id.add_menu);
 
         return true;
     }
@@ -260,6 +290,9 @@ public class ThirdActivity extends AppCompatActivity {
             nextScreen = new Intent(ThirdActivity.this, FirstActivity.class);
             finish();
             startActivity(nextScreen);
+            return true;
+        } else if (auxItem == R.id.share_menu) {
+            shareJson();
             return true;
         } else {
             return super.onOptionsItemSelected(item);
