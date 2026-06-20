@@ -273,7 +273,7 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     private void shareJson() {
-        File exportFile = dbm.exportJson(SecondActivity.this);
+        File exportFile = dbm.exportDedicatedJson(SecondActivity.this, listTitleId);
 
         if (exportFile != null) {
             Uri uri = FileProvider.getUriForFile(

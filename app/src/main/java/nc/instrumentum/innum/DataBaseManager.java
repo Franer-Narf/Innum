@@ -258,7 +258,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
         }
     }
 
-    //New part for sharing tables.
+    //Export for all list and their content.
     public File exportJson(Context context) {
         File sharedFolder = new File(context.getCacheDir(), "shared");
         File exportFile = new File(sharedFolder, "innum_export.json");
@@ -315,6 +315,103 @@ public class DataBaseManager extends SQLiteOpenHelper {
             writer.beginArray();
 
             cur = db.rawQuery("SELECT id, object, cuantity, idpl FROM products ORDER BY id", null);
+
+            if (cur != null) {
+                cur.moveToFirst();
+
+                while (!cur.isAfterLast()) {
+                    writer.beginObject();
+
+                    writer.name("id").value(cur.getInt(0));
+                    writer.name("object").value(cur.getString(1));
+                    writer.name("cuantity").value(cur.getInt(2));
+                    writer.name("idpl").value(cur.getInt(3));
+
+                    writer.endObject();
+
+                    cur.moveToNext();
+                }
+
+                cur.close();
+                cur = null;
+            }
+
+            writer.endArray();
+
+            writer.endObject(); // tables
+            writer.endObject(); // root
+
+            writer.close();
+
+            return exportFile;
+
+        } catch (Exception e) {
+            return null;
+
+        } finally {
+            if (cur != null) {
+                cur.close();
+            }
+        }
+    }
+
+    //Dedicated export for a specific list.
+    public File exportDedicatedJson(Context context, int listCode) {
+        File sharedFolder = new File(context.getCacheDir(), "shared");
+        File exportFile = new File(sharedFolder, "innum_export_list.json");
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cur = null;
+
+        try {
+            if (!sharedFolder.exists()) {
+                sharedFolder.mkdirs();
+            }
+
+            FileOutputStream fos = new FileOutputStream(exportFile);
+            OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+            JsonWriter writer = new JsonWriter(osw);
+
+            writer.setIndent("  ");
+
+            writer.beginObject();
+
+            writer.name("app").value("Innum");
+            writer.name("schema_version").value(1);
+            writer.name("exported_at").value(System.currentTimeMillis());
+
+            writer.name("tables");
+            writer.beginObject();
+
+            writer.name("productlist");
+            writer.beginArray();
+
+            cur = db.rawQuery("SELECT idpl, titlelist FROM productlist WHERE idpl = listCode ORDER BY idpl", null);
+
+            if (cur != null) {
+                cur.moveToFirst();
+
+                while (!cur.isAfterLast()) {
+                    writer.beginObject();
+
+                    writer.name("idpl").value(cur.getInt(0));
+                    writer.name("titlelist").value(cur.getString(1));
+
+                    writer.endObject();
+
+                    cur.moveToNext();
+                }
+
+                cur.close();
+                cur = null;
+            }
+
+            writer.endArray();
+
+            writer.name("products");
+            writer.beginArray();
+
+            cur = db.rawQuery("SELECT id, object, cuantity, idpl FROM products WHERE idpl = listCode ORDER BY id", null);
 
             if (cur != null) {
                 cur.moveToFirst();
