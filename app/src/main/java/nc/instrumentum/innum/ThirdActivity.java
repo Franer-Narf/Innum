@@ -242,6 +242,12 @@ public class ThirdActivity extends AppCompatActivity {
         });
     }
 
+    protected void openJsonFile() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/json");
+    }
+
     private void shareJson() {
         File exportFile = dbm.exportJson(ThirdActivity.this);
 
@@ -293,6 +299,9 @@ public class ThirdActivity extends AppCompatActivity {
             return true;
         } else if (auxItem == R.id.share_menu) {
             shareJson();
+            return true;
+        } else if (auxItem == R.id.add_menu) {
+            openJsonFile();
             return true;
         } else {
             return super.onOptionsItemSelected(item);

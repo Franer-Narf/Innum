@@ -41,7 +41,7 @@ public class SecondActivity extends AppCompatActivity {
     protected EditText text_second, text2_second;
     protected Button button_second, delbutton_second;
     protected TextView tV1_second;
-    protected MenuItem info_button, list_button, add_button, share_button;
+    protected MenuItem info_button, list_button, share_button;
 
     private boolean swipeHandler = false;
     protected float dX, dY;
@@ -302,7 +302,6 @@ public class SecondActivity extends AppCompatActivity {
         info_button = (MenuItem) findViewById(R.id.info_menu);
         list_button = (MenuItem) findViewById(R.id.listoflist_menu);
         share_button = (MenuItem) findViewById(R.id.share_menu);
-        add_button = (MenuItem) findViewById(R.id.add_menu);
 
         return true;
     }
