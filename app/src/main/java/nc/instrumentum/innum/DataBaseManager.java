@@ -386,7 +386,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
             writer.name("productlist");
             writer.beginArray();
 
-            cur = db.rawQuery("SELECT idpl, titlelist FROM productlist WHERE idpl = listCode ORDER BY idpl", null);
+            cur = db.rawQuery("SELECT idpl, titlelist FROM productlist WHERE idpl = ? ORDER BY idpl", new String[]{String.valueOf(listCode)});
 
             if (cur != null) {
                 cur.moveToFirst();
@@ -411,7 +411,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
             writer.name("products");
             writer.beginArray();
 
-            cur = db.rawQuery("SELECT id, object, cuantity, idpl FROM products WHERE idpl = listCode ORDER BY id", null);
+            cur = db.rawQuery("SELECT id, object, cuantity, idpl FROM products WHERE idpl = ? ORDER BY id", new String[]{String.valueOf(listCode)});
 
             if (cur != null) {
                 cur.moveToFirst();
