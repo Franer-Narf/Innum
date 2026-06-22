@@ -2,13 +2,16 @@ package nc.instrumentum.innum;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+
 import android.os.Bundle;
+
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,20 +22,33 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
 import androidx.recyclerview.widget.RecyclerView;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
+import androidx.core.content.FileProvider;
 
 import java.util.ArrayList;
 
 import android.net.Uri;
 
-import androidx.core.content.FileProvider;
-
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import android.app.Activity;
 
 public class ThirdActivity extends AppCompatActivity {
 
@@ -57,6 +73,8 @@ public class ThirdActivity extends AppCompatActivity {
     protected Bundle extra;
     protected GestureDetector gD;
 
+    protected ActivityResultLauncher<Intent> openJsonLauncher, saveJsonLauncher;
+
     //Logic
 
     @Override
@@ -80,6 +98,46 @@ public class ThirdActivity extends AppCompatActivity {
 
         adapterList = new ArrayAdapter<>(ThirdActivity.this, android.R.layout.simple_list_item_1, pileList);
         listV.setAdapter(adapterList);
+
+        openJsonLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                            Uri uri = result.getData().getData();
+
+                            if (uri != null) {
+                                if (dbm.importJson(ThirdActivity.this, uri)) {
+                                    pileList.clear();
+                                    pileList.addAll(dbm.getLists());
+                                    adapterList.notifyDataSetChanged();
+
+                                    Toast.makeText(ThirdActivity.this, "Data imported", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(ThirdActivity.this, "Invalid Innum file", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    }
+                }
+        );
+
+        saveJsonLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                            Uri uri = result.getData().getData();
+
+                            if (uri != null) {
+                                saveJson(uri);
+                            }
+                        }
+                    }
+                }
+        );
 
         //Delete by sweep section.
         gD =  new GestureDetector(ThirdActivity.this, new GestureDetector.SimpleOnGestureListener() {
@@ -246,6 +304,9 @@ public class ThirdActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/json");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        openJsonLauncher.launch(intent);
     }
 
     private void shareJson() {
@@ -267,6 +328,66 @@ public class ThirdActivity extends AppCompatActivity {
 
         } else {
             Toast.makeText(ThirdActivity.this,"Error exporting data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void exportJsonMenu() {
+        final String[] options = {
+                "Save JSON file",
+                "Share JSON file"
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ThirdActivity.this);
+
+        builder.setTitle("Export Innum data")
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            openSaveJsonFile();
+                        } else if (which == 1) {
+                            shareJson();
+                        }
+                    }
+                });
+
+        builder.create();
+        builder.show();
+    }
+
+    private void openSaveJsonFile() {
+        nextScreen = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        nextScreen.addCategory(Intent.CATEGORY_OPENABLE);
+        nextScreen.setType("application/json");
+        nextScreen.putExtra(Intent.EXTRA_TITLE, "innum_export.json");
+
+        saveJsonLauncher.launch(nextScreen);
+    }
+
+    private void saveJson(Uri uri) {
+        File exportFile = dbm.exportJson(ThirdActivity.this);
+
+        if (exportFile != null) {
+            try {
+                InputStream is = new FileInputStream(exportFile);
+                OutputStream os = getContentResolver().openOutputStream(uri);
+
+                byte[] buffer = new byte[8192];
+                int length;
+
+                while ((length = is.read(buffer)) > 0) {
+                    os.write(buffer, 0, length);
+                }
+
+                is.close();
+                os.close();
+
+                Toast.makeText(ThirdActivity.this, "JSON file saved", Toast.LENGTH_SHORT).show();
+
+            } catch (Exception e) {
+                Toast.makeText(ThirdActivity.this, "Error saving data", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(ThirdActivity.this, "Error exporting data", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -298,7 +419,7 @@ public class ThirdActivity extends AppCompatActivity {
             startActivity(nextScreen);
             return true;
         } else if (auxItem == R.id.share_menu) {
-            shareJson();
+            exportJsonMenu();
             return true;
         } else if (auxItem == R.id.add_menu) {
             openJsonFile();

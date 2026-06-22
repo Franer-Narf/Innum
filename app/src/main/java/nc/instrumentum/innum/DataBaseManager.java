@@ -17,6 +17,12 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
+import android.net.Uri;
+import android.util.JsonReader;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 public class DataBaseManager extends SQLiteOpenHelper {
     public DataBaseManager(@Nullable Context context) {
         super(context, "productslist", null, 2);
@@ -449,6 +455,158 @@ public class DataBaseManager extends SQLiteOpenHelper {
             if (cur != null) {
                 cur.close();
             }
+        }
+    }
+
+    public boolean importJson(Context context, Uri uri) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.beginTransaction();
+
+        try {
+            InputStream is = context.getContentResolver().openInputStream(uri);
+
+            if (is == null) {
+                return false;
+            }
+
+            InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+            JsonReader reader = new JsonReader(isr);
+
+            String appName = "";
+            int schemaVersion = -1;
+
+            reader.beginObject();
+
+            while (reader.hasNext()) {
+                String name = reader.nextName();
+
+                if (name.equals("app")) {
+                    appName = reader.nextString();
+
+                } else if (name.equals("schema_version")) {
+                    schemaVersion = reader.nextInt();
+
+                } else if (name.equals("exported_at")) {
+                    reader.skipValue();
+
+                } else if (name.equals("tables")) {
+                    if (!appName.equals("Innum") || schemaVersion != 1) {
+                        reader.close();
+                        return false;
+                    }
+
+                    db.execSQL("DELETE FROM products");
+                    db.execSQL("DELETE FROM productlist");
+                    db.execSQL("DELETE FROM sqlite_sequence WHERE name='products'");
+                    db.execSQL("DELETE FROM sqlite_sequence WHERE name='productlist'");
+
+                    reader.beginObject();
+
+                    while (reader.hasNext()) {
+                        String tableName = reader.nextName();
+
+                        if (tableName.equals("productlist")) {
+                            reader.beginArray();
+
+                            while (reader.hasNext()) {
+                                int idpl = -1;
+                                String titlelist = "";
+
+                                reader.beginObject();
+
+                                while (reader.hasNext()) {
+                                    String fieldName = reader.nextName();
+
+                                    if (fieldName.equals("idpl")) {
+                                        idpl = reader.nextInt();
+
+                                    } else if (fieldName.equals("titlelist")) {
+                                        titlelist = reader.nextString();
+
+                                    } else {
+                                        reader.skipValue();
+                                    }
+                                }
+
+                                reader.endObject();
+
+                                ContentValues values = new ContentValues();
+                                values.put("idpl", idpl);
+                                values.put("titlelist", titlelist);
+
+                                db.insert("productlist", null, values);
+                            }
+
+                            reader.endArray();
+
+                        } else if (tableName.equals("products")) {
+                            reader.beginArray();
+
+                            while (reader.hasNext()) {
+                                int id = -1;
+                                String object = "";
+                                int cuantity = 1;
+                                int idpl = -1;
+
+                                reader.beginObject();
+
+                                while (reader.hasNext()) {
+                                    String fieldName = reader.nextName();
+
+                                    if (fieldName.equals("id")) {
+                                        id = reader.nextInt();
+
+                                    } else if (fieldName.equals("object")) {
+                                        object = reader.nextString();
+
+                                    } else if (fieldName.equals("cuantity")) {
+                                        cuantity = reader.nextInt();
+
+                                    } else if (fieldName.equals("idpl")) {
+                                        idpl = reader.nextInt();
+
+                                    } else {
+                                        reader.skipValue();
+                                    }
+                                }
+
+                                reader.endObject();
+
+                                ContentValues values = new ContentValues();
+                                values.put("id", id);
+                                values.put("object", object);
+                                values.put("cuantity", cuantity);
+                                values.put("idpl", idpl);
+
+                                db.insert("products", null, values);
+                            }
+
+                            reader.endArray();
+
+                        } else {
+                            reader.skipValue();
+                        }
+                    }
+
+                    reader.endObject();
+
+                } else {
+                    reader.skipValue();
+                }
+            }
+
+            reader.endObject();
+            reader.close();
+
+            db.setTransactionSuccessful();
+            return true;
+
+        } catch (Exception e) {
+            return false;
+
+        } finally {
+            db.endTransaction();
         }
     }
 }

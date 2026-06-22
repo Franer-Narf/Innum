@@ -16,22 +16,26 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.net.Uri;
+import android.app.Activity;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.activity.OnBackPressedCallback;
-
-import android.net.Uri;
-
-import androidx.core.content.FileProvider;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import java.io.File;
-
-
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import java.util.ArrayList;
 
@@ -58,6 +62,8 @@ public class SecondActivity extends AppCompatActivity {
     protected Intent nextScreen;
     protected Bundle extra;
     protected GestureDetector gD;
+
+    protected ActivityResultLauncher<Intent> saveJsonLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +95,22 @@ public class SecondActivity extends AppCompatActivity {
 
         adaptador = new ArrayAdapter<>(SecondActivity.this, android.R.layout.simple_list_item_1, buyingList);
         list_second.setAdapter(adaptador);
+
+        saveJsonLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                            Uri uri = result.getData().getData();
+
+                            if (uri != null) {
+                                saveJson(uri);
+                            }
+                        }
+                    }
+                }
+        );
 
         //Delete by sweep section.
         gD =  new GestureDetector(SecondActivity.this, new GestureDetector.SimpleOnGestureListener() {
@@ -294,6 +316,66 @@ public class SecondActivity extends AppCompatActivity {
         }
     }
 
+    private void exportJsonMenu() {
+        final String[] options = {
+                "Save JSON file",
+                "Share JSON file"
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(SecondActivity.this);
+
+        builder.setTitle("Export Innum data")
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            openSaveJsonFile();
+                        } else if (which == 1) {
+                            shareJson();
+                        }
+                    }
+                });
+
+        builder.create();
+        builder.show();
+    }
+
+    private void openSaveJsonFile() {
+        nextScreen = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        nextScreen.addCategory(Intent.CATEGORY_OPENABLE);
+        nextScreen.setType("application/json");
+        nextScreen.putExtra(Intent.EXTRA_TITLE, "innum_export.json");
+
+        saveJsonLauncher.launch(nextScreen);
+    }
+
+    private void saveJson(Uri uri) {
+        File exportFile = dbm.exportJson(SecondActivity.this);
+
+        if (exportFile != null) {
+            try {
+                InputStream is = new FileInputStream(exportFile);
+                OutputStream os = getContentResolver().openOutputStream(uri);
+
+                byte[] buffer = new byte[8192];
+                int length;
+
+                while ((length = is.read(buffer)) > 0) {
+                    os.write(buffer, 0, length);
+                }
+
+                is.close();
+                os.close();
+
+                Toast.makeText(SecondActivity.this, "JSON file saved", Toast.LENGTH_SHORT).show();
+
+            } catch (Exception e) {
+                Toast.makeText(SecondActivity.this, "Error saving data", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(SecondActivity.this, "Error exporting data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -319,7 +401,7 @@ public class SecondActivity extends AppCompatActivity {
             startActivity(nextScreen);
             return true;
         } else if (auxItem == R.id.share_menu) {
-            shareJson();
+            exportJsonMenu();
             return true;
         } else {
             return super.onOptionsItemSelected(item);
