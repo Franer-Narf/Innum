@@ -309,7 +309,7 @@ public class SecondActivity extends AppCompatActivity {
             nextScreen.putExtra(Intent.EXTRA_STREAM, uri);
             nextScreen.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-            startActivity(Intent.createChooser(nextScreen, "Share Innum data"));
+            startActivity(Intent.createChooser(nextScreen, getString(R.string.share_json_chooser)));
 
         } else {
             Toast.makeText(SecondActivity.this,"Error exporting data", Toast.LENGTH_SHORT).show();
@@ -318,13 +318,13 @@ public class SecondActivity extends AppCompatActivity {
 
     private void exportJsonMenu() {
         final String[] options = {
-                "Save JSON file",
-                "Share JSON file"
+                getString(R.string.export_json_download),
+                getString(R.string.export_json_share)
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(SecondActivity.this);
 
-        builder.setTitle("Export Innum data")
+        builder.setTitle(getString(R.string.export_json_title))
                 .setItems(options, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0) {
@@ -366,13 +366,13 @@ public class SecondActivity extends AppCompatActivity {
                 is.close();
                 os.close();
 
-                Toast.makeText(SecondActivity.this, "JSON file saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SecondActivity.this, getString(R.string.json_file_saved), Toast.LENGTH_SHORT).show();
 
             } catch (Exception e) {
-                Toast.makeText(SecondActivity.this, "Error saving data", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SecondActivity.this, getString(R.string.json_save_error), Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(SecondActivity.this, "Error exporting data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SecondActivity.this, getString(R.string.json_export_error), Toast.LENGTH_SHORT).show();
         }
     }
 

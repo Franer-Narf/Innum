@@ -1,27 +1,28 @@
 package nc.instrumentum.innum;
 
+// Android
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import androidx.annotation.Nullable;
-
-import java.util.ArrayList;
+import android.net.Uri;
+import android.util.JsonReader;
 import android.util.JsonWriter;
 
+// AndroidX
+import androidx.annotation.Nullable;
+
+// Java
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-
-import android.net.Uri;
-import android.util.JsonReader;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DataBaseManager extends SQLiteOpenHelper {
     public DataBaseManager(@Nullable Context context) {
@@ -64,11 +65,20 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
         try {
             if (!existList(title)) {
-                db.execSQL("INSERT INTO productlist (titlelist) VALUES (?)", new Object[]{title});
-                cur = db.rawQuery("SELECT idpl FROM productlist WHERE titlelist='" + title + "'", null);
+                db.execSQL("INSERT INTO productlist (titlelist) VALUES (?)", new String[]{title});
+                cur = db.rawQuery("SELECT idpl FROM productlist WHERE titlelist = ?", new String[]{title});
                 if(cur.moveToFirst()) {
                     return cur.getInt(0);
                 }
+            } else if (existList(title)){
+                String originalTitle = title;
+                int copyNumber = 0;
+
+                while (existList(title)) {
+                    title = originalTitle + " " + "(" + copyNumber + ")";
+                    copyNumber++;
+                }
+                return createList(title);
             }
             return -1;
         } finally {
@@ -476,6 +486,8 @@ public class DataBaseManager extends SQLiteOpenHelper {
             String appName = "";
             int schemaVersion = -1;
 
+            HashMap<Integer, Integer> idplMap = new HashMap<>();
+
             reader.beginObject();
 
             while (reader.hasNext()) {
@@ -495,11 +507,6 @@ public class DataBaseManager extends SQLiteOpenHelper {
                         reader.close();
                         return false;
                     }
-
-                    db.execSQL("DELETE FROM products");
-                    db.execSQL("DELETE FROM productlist");
-                    db.execSQL("DELETE FROM sqlite_sequence WHERE name='products'");
-                    db.execSQL("DELETE FROM sqlite_sequence WHERE name='productlist'");
 
                     reader.beginObject();
 
@@ -531,11 +538,14 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
                                 reader.endObject();
 
-                                ContentValues values = new ContentValues();
-                                values.put("idpl", idpl);
-                                values.put("titlelist", titlelist);
+                                //Upgrade of importing lists.
+                                int newIdpl = createList(titlelist);
 
-                                db.insert("productlist", null, values);
+                                if (newIdpl == -1) {
+                                    return false;
+                                }
+
+                                idplMap.put(idpl, newIdpl);
                             }
 
                             reader.endArray();
@@ -573,13 +583,17 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
                                 reader.endObject();
 
-                                ContentValues values = new ContentValues();
-                                values.put("id", id);
-                                values.put("object", object);
-                                values.put("cuantity", cuantity);
-                                values.put("idpl", idpl);
+                                Integer newIdpl = idplMap.get(idpl);
 
-                                db.insert("products", null, values);
+                                if (newIdpl == null) {
+                                    return false;
+                                }
+
+                                int newId = setProducts(object, cuantity, newIdpl);
+
+                                if (newId == -1) {
+                                    return false;
+                                }
                             }
 
                             reader.endArray();

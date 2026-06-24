@@ -27,4 +27,12 @@
     <string name="string_delete">Eliminar</string>
     <string name="string_edit">Editar</string>
     <string name="string_edit_title">Editor</string>
+    <string name="copy">duplicado</string>
+    <string name="export_json_title">Exportar datos de Innum</string>
+    <string name="export_json_download">Descargar archivo JSON</string>
+    <string name="export_json_share">Compartir archivo JSON</string>
+    <string name="share_json_chooser">Compartir datos de Innum</string>
+    <string name="json_file_saved">Archivo JSON guardado.</string>
+    <string name="json_save_error">Error al guardar datos.</string>
+    <string name="json_export_error">Error al exportar datos.</string>
 </resources>

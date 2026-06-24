@@ -27,4 +27,12 @@
     <string name="string_delete">Delete</string>
     <string name="string_edit">Edit</string>
     <string name="string_edit_title">Edit</string>
+    <string name="copy">copy</string>
+    <string name="export_json_title">Export Innum data</string>
+    <string name="export_json_download">Download JSON file</string>
+    <string name="export_json_share">Share JSON file</string>
+    <string name="share_json_chooser">Share Innum data</string>
+    <string name="json_file_saved">JSON file saved.</string>
+    <string name="json_save_error">Error saving data.</string>
+    <string name="json_export_error">Error exporting data.</string>
 </resources>
