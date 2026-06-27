@@ -83,14 +83,16 @@ public class SecondActivity extends AppCompatActivity {
         delbutton_second = (Button) findViewById(R.id.delbutton_second);
         tV1_second = (TextView) findViewById(R.id.tV1_second);
 
+        dbm = new DataBaseManager(this);
+
         extra = getIntent().getExtras();
         if (extra!=null) {
             listTitleId = extra.getInt("ID_LIST");
-            listTitleString = extra.getString("STRING_LIST");
+            listTitleString = dbm.getNameList(listTitleId); //.getString("STRING_LIST");
             tV1_second.setText(listTitleString);
         }
 
-        dbm = new DataBaseManager(this);
+
         buyingList = dbm.getProducts(listTitleId);
 
         adaptador = new ArrayAdapter<>(SecondActivity.this, android.R.layout.simple_list_item_1, buyingList);
@@ -255,6 +257,9 @@ public class SecondActivity extends AppCompatActivity {
                                    if (dbm.deleteAllProducts(listTitleId)) {
                                        buyingList.clear();
                                        adaptador.notifyDataSetChanged();
+                                       nextScreen = new Intent(SecondActivity.this, ThirdActivity.class);
+                                       finish();
+                                       startActivity(nextScreen);
                                    }
                                }
                            })
@@ -343,13 +348,13 @@ public class SecondActivity extends AppCompatActivity {
         nextScreen = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         nextScreen.addCategory(Intent.CATEGORY_OPENABLE);
         nextScreen.setType("application/json");
-        nextScreen.putExtra(Intent.EXTRA_TITLE, "innum_export.json");
+        nextScreen.putExtra(Intent.EXTRA_TITLE, "innum_export_list.json");
 
         saveJsonLauncher.launch(nextScreen);
     }
 
     private void saveJson(Uri uri) {
-        File exportFile = dbm.exportJson(SecondActivity.this);
+        File exportFile =     dbm.exportDedicatedJson(SecondActivity.this, listTitleId);
 
         if (exportFile != null) {
             try {

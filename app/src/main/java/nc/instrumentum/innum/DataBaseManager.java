@@ -95,7 +95,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
         try {
             if (!existProducts(prdct, lstCd)) {
                 db.execSQL("INSERT INTO products (object, cuantity, idpl) VALUES (?, ?, ?)", new Object[]{prdct,cntt,lstCd});
-                cur = db.rawQuery("SELECT id FROM products WHERE object='" + prdct + "' AND idpl = " + lstCd, null);
+                cur = db.rawQuery("SELECT id FROM products WHERE object = ? AND idpl = ?", new String[]{prdct,String.valueOf(lstCd)});
                 if(cur.moveToFirst()){
                     return cur.getInt(0);
             }
@@ -129,7 +129,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
     public ArrayList<Product> getProducts (int listCode) {
         ArrayList<Product> prdcts = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cur = db.rawQuery("SELECT * FROM products WHERE idpl = " + listCode, null);
+        Cursor cur = db.rawQuery("SELECT * FROM products WHERE idpl = ?", new String[]{String.valueOf(listCode)});
         try {
             if (cur != null) {
                 cur.moveToFirst();
@@ -186,7 +186,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
     public boolean existProducts (String name, int listCode) {
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cur = db.rawQuery("SELECT * FROM products WHERE object = '" + name + "' AND idpl = " + listCode, null);
+        Cursor cur = db.rawQuery("SELECT * FROM products WHERE object = ? AND idpl = ?", new String[]{name,String.valueOf(listCode)});
         try{
             if (cur != null) {
                 cur.moveToLast();
@@ -203,7 +203,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
     public boolean existList (String name) {
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cur = db.rawQuery("SELECT * FROM productList WHERE titlelist = '" + name + "'", null);
+        Cursor cur = db.rawQuery("SELECT * FROM productList WHERE titlelist = ?", new String[]{name});
         try{
             if (cur != null) {
                 cur.moveToLast();
@@ -220,7 +220,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
     public boolean deleteProducts (int id, int listCode) {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM products WHERE id=" + id + " AND idpl = " + listCode);
+        db.execSQL("DELETE FROM products WHERE id = ? AND idpl = ?", new Object[]{id,listCode});
         if (existIdProducts(id, listCode)) {
             return false;
         }
@@ -231,7 +231,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         try {
-            db.execSQL("DELETE FROM productlist WHERE idpl = " + listCode);
+            db.execSQL("DELETE FROM productlist WHERE idpl = ?", new Object[]{listCode});
             return true;
         } finally {
             //Nothing.
@@ -260,7 +260,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
     public boolean existIdProducts (int id, int listCode) {
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cur = db.rawQuery("SELECT * FROM products WHERE id = '"+ id +"' AND idpl = " + listCode, null);
+        Cursor cur = db.rawQuery("SELECT * FROM products WHERE id = ? AND idpl = ?", new String[]{String.valueOf(id),String.valueOf(listCode)});
         try {
             if (cur != null) {
                 cur.moveToLast();
@@ -269,6 +269,20 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 }
             }
             return false;
+        } finally {
+            cur.close();
+        }
+    }
+
+    public String getNameList (int listCode) {
+        String title = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cur = db.rawQuery("SELECT titlelist FROM productlist WHERE idpl = ?", new String[]{String.valueOf(listCode)});
+        try {
+            if (cur.moveToFirst()){
+                title = cur.getString(0);
+            }
+            return title;
         } finally {
             cur.close();
         }
