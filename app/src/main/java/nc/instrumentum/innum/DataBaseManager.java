@@ -98,9 +98,9 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 cur = db.rawQuery("SELECT id FROM products WHERE object = ? AND idpl = ?", new String[]{prdct,String.valueOf(lstCd)});
                 if(cur.moveToFirst()){
                     return cur.getInt(0);
+                }
             }
-        }
-        return -1;
+            return -1;
         } finally {
             if(cur!=null) {
                 cur.close();
@@ -193,8 +193,8 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 if (cur.getCount() > 0) {
                     return true;
                 }
-         }
-        return false;
+            }
+            return false;
         } finally {
             cur.close();
         }
@@ -502,37 +502,65 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
             HashMap<Integer, Integer> idplMap = new HashMap<>();
 
+            boolean appFound = false;
+            boolean schemaVersionFound = false;
+            boolean tablesFound = false;
+            boolean productListFound = false;
+            boolean productsFound = false;
+
             reader.beginObject();
 
             while (reader.hasNext()) {
                 String name = reader.nextName();
 
                 if (name.equals("app")) {
+                    if (appFound) {
+                        reader.close();
+                        return false;
+                    }
+
                     appName = reader.nextString();
+                    appFound = true;
 
                 } else if (name.equals("schema_version")) {
+                    if (schemaVersionFound) {
+                        reader.close();
+                        return false;
+                    }
+
                     schemaVersion = reader.nextInt();
+                    schemaVersionFound = true;
 
                 } else if (name.equals("exported_at")) {
                     reader.skipValue();
 
                 } else if (name.equals("tables")) {
-                    if (!appName.equals("Innum") || schemaVersion != 1) {
+                    if (tablesFound) {
                         reader.close();
                         return false;
                     }
 
+                    tablesFound = true;
                     reader.beginObject();
 
                     while (reader.hasNext()) {
                         String tableName = reader.nextName();
 
                         if (tableName.equals("productlist")) {
+                            if (productListFound) {
+                                reader.close();
+                                return false;
+                            }
+
+                            productListFound = true;
                             reader.beginArray();
 
                             while (reader.hasNext()) {
                                 int idpl = -1;
                                 String titlelist = "";
+
+                                boolean idplFound = false;
+                                boolean titleListFound = false;
 
                                 reader.beginObject();
 
@@ -540,10 +568,22 @@ public class DataBaseManager extends SQLiteOpenHelper {
                                     String fieldName = reader.nextName();
 
                                     if (fieldName.equals("idpl")) {
+                                        if (idplFound) {
+                                            reader.close();
+                                            return false;
+                                        }
+
                                         idpl = reader.nextInt();
+                                        idplFound = true;
 
                                     } else if (fieldName.equals("titlelist")) {
+                                        if (titleListFound) {
+                                            reader.close();
+                                            return false;
+                                        }
+
                                         titlelist = reader.nextString();
+                                        titleListFound = true;
 
                                     } else {
                                         reader.skipValue();
@@ -552,10 +592,22 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
                                 reader.endObject();
 
+                                if (!idplFound ||
+                                        !titleListFound ||
+                                        idpl < 1 ||
+                                        titlelist == null ||
+                                        titlelist.trim().isEmpty() ||
+                                        idplMap.containsKey(idpl)) {
+
+                                    reader.close();
+                                    return false;
+                                }
+
                                 //Upgrade of importing lists.
                                 int newIdpl = createList(titlelist);
 
                                 if (newIdpl == -1) {
+                                    reader.close();
                                     return false;
                                 }
 
@@ -565,6 +617,12 @@ public class DataBaseManager extends SQLiteOpenHelper {
                             reader.endArray();
 
                         } else if (tableName.equals("products")) {
+                            if (productsFound) {
+                                reader.close();
+                                return false;
+                            }
+
+                            productsFound = true;
                             reader.beginArray();
 
                             while (reader.hasNext()) {
@@ -573,22 +631,51 @@ public class DataBaseManager extends SQLiteOpenHelper {
                                 int cuantity = 1;
                                 int idpl = -1;
 
+                                boolean idFound = false;
+                                boolean objectFound = false;
+                                boolean cuantityFound = false;
+                                boolean idplFound = false;
+
                                 reader.beginObject();
 
                                 while (reader.hasNext()) {
                                     String fieldName = reader.nextName();
 
                                     if (fieldName.equals("id")) {
+                                        if (idFound) {
+                                            reader.close();
+                                            return false;
+                                        }
+
                                         id = reader.nextInt();
+                                        idFound = true;
 
                                     } else if (fieldName.equals("object")) {
+                                        if (objectFound) {
+                                            reader.close();
+                                            return false;
+                                        }
+
                                         object = reader.nextString();
+                                        objectFound = true;
 
                                     } else if (fieldName.equals("cuantity")) {
+                                        if (cuantityFound) {
+                                            reader.close();
+                                            return false;
+                                        }
+
                                         cuantity = reader.nextInt();
+                                        cuantityFound = true;
 
                                     } else if (fieldName.equals("idpl")) {
+                                        if (idplFound) {
+                                            reader.close();
+                                            return false;
+                                        }
+
                                         idpl = reader.nextInt();
+                                        idplFound = true;
 
                                     } else {
                                         reader.skipValue();
@@ -597,15 +684,31 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
                                 reader.endObject();
 
+                                if (!idFound ||
+                                        !objectFound ||
+                                        !cuantityFound ||
+                                        !idplFound ||
+                                        id < 1 ||
+                                        object == null ||
+                                        object.trim().isEmpty() ||
+                                        cuantity < 0 ||
+                                        idpl < 1) {
+
+                                    reader.close();
+                                    return false;
+                                }
+
                                 Integer newIdpl = idplMap.get(idpl);
 
                                 if (newIdpl == null) {
+                                    reader.close();
                                     return false;
                                 }
 
                                 int newId = setProducts(object, cuantity, newIdpl);
 
                                 if (newId == -1) {
+                                    reader.close();
                                     return false;
                                 }
                             }
@@ -625,6 +728,22 @@ public class DataBaseManager extends SQLiteOpenHelper {
             }
 
             reader.endObject();
+
+            if (!appFound ||
+                    !schemaVersionFound ||
+                    !tablesFound ||
+                    !productListFound ||
+                    !productsFound) {
+
+                reader.close();
+                return false;
+            }
+
+            if (!"Innum".equals(appName) || schemaVersion != 1) {
+                reader.close();
+                return false;
+            }
+
             reader.close();
 
             db.setTransactionSuccessful();

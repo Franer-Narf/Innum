@@ -396,10 +396,10 @@ public class ThirdActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
 
-        info_button = (MenuItem) findViewById(R.id.info_menu);
-        list_button = (MenuItem) findViewById(R.id.listoflist_menu);
-        share_button = (MenuItem) findViewById(R.id.share_menu);
-        add_button = (MenuItem) findViewById(R.id.add_menu);
+        info_button = menu.findItem(R.id.info_menu);
+        list_button = menu.findItem(R.id.listoflist_menu);
+        share_button = menu.findItem(R.id.share_menu);
+        add_button = menu.findItem(R.id.add_menu);
 
         return true;
     }
