@@ -23,6 +23,14 @@
     a:hover {
       text-decoration: underline;
     }
+
+    ul {
+      padding-left: 22px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
   </style>
 </head>
 <body>
@@ -34,42 +42,85 @@
   <p><b><i>Donaciones:</i></b></p>
   <p><a href="https://buymeacoffee.com/franer">Para apoyar al desarrollador.</a></p>
 
-  <p><b><i>Propósito:</i></b></p>
+  <h2>Propósito</h2>
   <p>
-    El objetivo de esta aplicación es servir como una lista de seguimiento de elementos que van a completarse.
+    Innum es una aplicación sencilla para crear listas de seguimiento. Está pensada para organizar elementos que deben revisarse, completarse o eliminarse cuando ya no hagan falta.
   </p>
   <p>
-    Su propósito original era ayudar como una lista de la compra, con la posibilidad de eliminar lo que ya tienes en el carrito, centrándose en los artículos que todavía faltan por encontrar en la tienda.
+    Su uso original es servir como lista de la compra: puedes crear una lista, añadir productos con cantidad y eliminar los elementos que ya tengas en el carrito para centrarte en lo que falta.
   </p>
   <p>
-    Como el propósito de esta aplicación podía implementarse de más de una manera, la desarrollé como una lista general de seguimiento de elementos, con una forma sencilla de eliminar los elementos seleccionados.
+    También puede usarse como lista general de tareas, inventario simple o cualquier conjunto de elementos que quieras controlar por separado.
   </p>
 
   <h2>¿Cómo funciona?</h2>
 
-  <h3>Secciones de la aplicación</h3>
+  <h3>Inicio</h3>
+  <p>
+    Al abrir la app se muestra una pantalla inicial con el nombre y el logotipo de Innum. Después, la aplicación abre automáticamente la pantalla principal de listas.
+  </p>
 
-  <p><b>Pantalla de listas:</b></p>
-  <p>En esta sección encontrarás todas las listas creadas.</p>
-  <p>Aquí puedes ver todo el contenido relacionado con cada lista.</p>
-  <p>· Para añadir un elemento, rellena los campos y pulsa el botón "Añadir" para insertar una nueva lista (serás redirigido al contenido vacío de la nueva lista).</p>
-  <p>· Para acceder a un elemento existente, toca una vez la lista deseada para abrirla.</p>
-  <p>· Para eliminar un elemento, deslízalo horizontalmente.</p>
-  <p>· Para editar un elemento, mantén pulsado el elemento y rellena los nuevos campos en la ventana emergente.</p>
+  <h3>Pantalla de listas</h3>
+  <p>
+    Esta es la pantalla principal. Muestra todas las listas que has creado.
+  </p>
+  <ul>
+    <li>Para crear una lista, escribe un título y pulsa <b>Añadir</b>. La app abrirá automáticamente la nueva lista.</li>
+    <li>Para abrir una lista existente, toca una vez sobre su nombre.</li>
+    <li>Para editar el nombre de una lista, mantén pulsada la lista y escribe el nuevo título en la ventana emergente.</li>
+    <li>Para eliminar una lista, deslízala horizontalmente hacia la derecha. Al eliminar una lista también se eliminan sus elementos.</li>
+    <li>Para eliminar todas las listas, pulsa <b>Eliminar todo</b> y confirma la acción.</li>
+    <li>Desde el menú superior puedes importar un archivo JSON de Innum o exportar todas tus listas.</li>
+  </ul>
 
-  <p><b>Pantalla de lista seleccionada:</b></p>
-  <p>Aquí puedes ver todo el contenido relacionado con la lista seleccionada.</p>
-  <p>· Para añadir un elemento, rellena los campos y pulsa el botón "Añadir" para insertar un nuevo elemento (si no se indica cantidad, se establecerá en 1).</p>
-  <p>· Para eliminar un elemento, deslízalo horizontalmente.</p>
-  <p>· Para editar un elemento, mantén pulsado el elemento y rellena los nuevos campos en la ventana emergente.</p>
+  <h3>Pantalla de lista seleccionada</h3>
+  <p>
+    Muestra los elementos guardados dentro de una lista concreta.
+  </p>
+  <ul>
+    <li>Para añadir un elemento, escribe el nombre y pulsa <b>Añadir</b>.</li>
+    <li>La cantidad es opcional. Si no introduces cantidad, se guardará automáticamente como 1.</li>
+    <li>Los elementos se muestran con su nombre y cantidad, por ejemplo: <b>Manzanas x3</b>.</li>
+    <li>Para editar un elemento, mantén pulsado el elemento y modifica su nombre o cantidad en la ventana emergente.</li>
+    <li>Para eliminar un elemento, deslízalo horizontalmente hacia la derecha.</li>
+    <li>El botón <b>Eliminar todo</b> elimina la lista seleccionada completa y vuelve a la pantalla principal de listas.</li>
+    <li>Desde el menú superior puedes exportar solamente la lista que estás viendo.</li>
+  </ul>
 
-  <p><b>Pantalla de información:</b></p>
-  <p>Una guía sencilla sobre cómo usar la aplicación y cuál es su propósito.</p>
-  <p>Donde te encuentras ahora mismo.</p>
+  <h3>Pantalla de información</h3>
+  <p>
+    Es esta pantalla. Contiene una explicación del propósito de Innum y una guía de uso de sus funciones principales.
+  </p>
 
-  <p><b>Barra de menú:</b></p>
-  <p>Menú sencillo con dos iconos:</p>
-  <p>· Icono con una "i" dentro de un círculo: abre la pantalla de información.</p>
-  <p>· Icono con una flecha hacia abajo dentro de un círculo: abre la pantalla general de listas.</p>
+  <h2>Menú superior</h2>
+  <p>
+    La barra superior permite moverse entre pantallas y acceder a funciones de importación y exportación.
+  </p>
+  <ul>
+    <li><b>Icono de información:</b> abre esta pantalla de ayuda.</li>
+    <li><b>Icono de lista:</b> vuelve a la pantalla general de listas.</li>
+    <li><b>Icono de compartir:</b> permite exportar datos. En la pantalla de listas exporta todo; dentro de una lista exporta solo esa lista.</li>
+    <li><b>Icono de añadir:</b> en la pantalla principal de listas abre el selector para importar un archivo JSON de Innum. Este icono no aparece dentro de una lista seleccionada.</li>
+  </ul>
+
+  <h2>Importar y exportar datos</h2>
+  <p>
+    Innum permite guardar tus datos en archivos JSON para conservar copias, mover información entre dispositivos o compartir listas.
+  </p>
+  <ul>
+    <li><b>Exportar todas las listas:</b> desde la pantalla principal, usa el icono de compartir y elige si quieres descargar el archivo o compartirlo con otra app.</li>
+    <li><b>Exportar una lista concreta:</b> abre la lista deseada, usa el icono de compartir y elige descargar o compartir.</li>
+    <li><b>Importar:</b> desde la pantalla principal, usa el icono de añadir del menú superior y selecciona un archivo JSON válido de Innum.</li>
+    <li>Los archivos exportados incluyen el nombre de la app, la versión del esquema y los datos de listas y elementos.</li>
+    <li>Si importas una lista cuyo nombre ya existe, Innum crea una copia con un nombre alternativo para evitar sobrescribir tus datos.</li>
+  </ul>
+
+  <h2>Notas de uso</h2>
+  <ul>
+    <li>Los títulos de listas y nombres de elementos no pueden estar vacíos.</li>
+    <li>Dentro de una misma lista no se permite repetir el mismo elemento.</li>
+    <li>Los datos se guardan localmente en el dispositivo mediante una base de datos interna.</li>
+    <li>Las acciones de borrado importantes muestran una confirmación antes de continuar.</li>
+  </ul>
 </body>
 </html>

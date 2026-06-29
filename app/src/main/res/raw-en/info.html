@@ -23,6 +23,14 @@
     a:hover {
       text-decoration: underline;
     }
+
+    ul {
+      padding-left: 22px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
   </style>
 </head>
 <body>
@@ -34,42 +42,85 @@
   <p><b><i>Donations:</i></b></p>
   <p><a href="https://buymeacoffee.com/franer">To support the developer.</a></p>
 
-  <p><b><i>Purpose:</i></b></p>
+  <h2>Purpose</h2>
   <p>
-    The objective of this app is to serve as a tracking list of items that are going to be completed.
+    Innum is a simple app for creating tracking lists. It is designed to organize items that need to be reviewed, completed, or removed once they are no longer needed.
   </p>
   <p>
-    Its original purpose was to help as a grocery list, with the ability to remove what you already have in your cart, focusing on the items that are still left to find in the store.
+    Its original use is as a shopping list: you can create a list, add products with quantities, and remove the items you already have in your cart so you can focus on what is still missing.
   </p>
   <p>
-    As the purpose of this app could be implemented in more than one way, I developed it as a general item-tracking list, with an easy way to clear the selected items.
+    It can also be used as a general task list, a simple inventory, or any separated set of items you want to manage.
   </p>
 
   <h2>How does it work?</h2>
 
-  <h3>Sections of the app</h3>
+  <h3>Start</h3>
+  <p>
+    When the app opens, it shows an initial screen with the Innum name and logo. Then the app automatically opens the main list screen.
+  </p>
 
-  <p><b>"List/s" screen:</b></p>
-  <p>In this section, you will find all the created lists.</p>
-  <p>Here you can see all the content related to each list.</p>
-  <p>· To add an element, fill in the fields and press the "Add" button to insert a new list (you will be redirected to the new empty list content).</p>
-  <p>· To access an existing element, tap once on the desired list to open it.</p>
-  <p>· To delete an element, slide it horizontally.</p>
-  <p>· To edit an element, hold the item pressed and fill in the new fields in the popup window.</p>
+  <h3>List screen</h3>
+  <p>
+    This is the main screen. It shows all the lists you have created.
+  </p>
+  <ul>
+    <li>To create a list, enter a title and press <b>Add</b>. The app will automatically open the new list.</li>
+    <li>To open an existing list, tap its name once.</li>
+    <li>To edit a list name, long-press the list and enter the new title in the popup window.</li>
+    <li>To delete a list, swipe it horizontally to the right. Deleting a list also deletes its items.</li>
+    <li>To delete all lists, press <b>Delete all</b> and confirm the action.</li>
+    <li>From the top menu, you can import an Innum JSON file or export all your lists.</li>
+  </ul>
 
-  <p><b>Selected list screen:</b></p>
-  <p>Here you can see all the content related to the selected list.</p>
-  <p>· To add an element, fill in the fields and press the "Add" button to insert a new item (if no quantity is indicated, it will be set to 1).</p>
-  <p>· To delete an element, slide it horizontally.</p>
-  <p>· To edit an element, hold the item pressed and fill in the new fields in the popup window.</p>
+  <h3>Selected list screen</h3>
+  <p>
+    This screen shows the items stored inside a specific list.
+  </p>
+  <ul>
+    <li>To add an item, enter its name and press <b>Add</b>.</li>
+    <li>The quantity is optional. If no quantity is entered, it will automatically be saved as 1.</li>
+    <li>Items are displayed with their name and quantity, for example: <b>Apples x3</b>.</li>
+    <li>To edit an item, long-press the item and update its name or quantity in the popup window.</li>
+    <li>To delete an item, swipe it horizontally to the right.</li>
+    <li>The <b>Delete all</b> button deletes the selected list completely and returns to the main list screen.</li>
+    <li>From the top menu, you can export only the list you are currently viewing.</li>
+  </ul>
 
-  <p><b>Information screen:</b></p>
-  <p>A simple guide on how to use the app and its purpose.</p>
-  <p>Where you are right now.</p>
+  <h3>Information screen</h3>
+  <p>
+    This is the current screen. It explains the purpose of Innum and provides a guide to its main features.
+  </p>
 
-  <p><b>Menu bar:</b></p>
-  <p>Simple menu with two icons:</p>
-  <p>· Icon with an "i" inside a circle: opens the information screen.</p>
-  <p>· Icon with a down arrow inside a circle: opens the general list screen.</p>
+  <h2>Top menu</h2>
+  <p>
+    The top bar lets you move between screens and access import and export features.
+  </p>
+  <ul>
+    <li><b>Information icon:</b> opens this help screen.</li>
+    <li><b>List icon:</b> returns to the general list screen.</li>
+    <li><b>Share icon:</b> exports data. On the list screen it exports everything; inside a selected list it exports only that list.</li>
+    <li><b>Add icon:</b> on the main list screen it opens the file picker to import an Innum JSON file. This icon is not shown inside a selected list.</li>
+  </ul>
+
+  <h2>Importing and exporting data</h2>
+  <p>
+    Innum can save your data as JSON files so you can keep backups, move information between devices, or share lists.
+  </p>
+  <ul>
+    <li><b>Export all lists:</b> from the main screen, use the share icon and choose whether to download the file or share it with another app.</li>
+    <li><b>Export one specific list:</b> open the desired list, use the share icon, and choose download or share.</li>
+    <li><b>Import:</b> from the main screen, use the add icon in the top menu and select a valid Innum JSON file.</li>
+    <li>Exported files include the app name, schema version, and the list and item data.</li>
+    <li>If you import a list whose name already exists, Innum creates a copy with an alternative name to avoid overwriting your data.</li>
+  </ul>
+
+  <h2>Usage notes</h2>
+  <ul>
+    <li>List titles and item names cannot be empty.</li>
+    <li>The same item cannot be repeated inside the same list.</li>
+    <li>Data is stored locally on the device using an internal database.</li>
+    <li>Important delete actions ask for confirmation before continuing.</li>
+  </ul>
 </body>
 </html>

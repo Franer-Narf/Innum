@@ -23,7 +23,7 @@ import java.util.TimerTask;
 
 public class FirstActivity extends AppCompatActivity {
 
-    protected MenuItem info_button, list_button;
+    protected MenuItem info_button, list_button, share_button, add_button;
     protected WebView wV;
     protected Intent nextScreen;
 
@@ -89,6 +89,10 @@ public class FirstActivity extends AppCompatActivity {
 
         info_button = menu.findItem(R.id.info_menu);
         list_button = menu.findItem(R.id.listoflist_menu);
+        share_button = menu.findItem(R.id.share_menu);
+        add_button = menu.findItem(R.id.add_menu);
+        add_button.setVisible(false);
+        share_button.setVisible(false);
 
         return true;
     }
